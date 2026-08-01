@@ -331,7 +331,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
 
 
     def loss_function(self, x, x_err, results, true_labels, alpha = 1.0, beta=1.0, gamma = 1.0):
-        """Computes the VAE loss."""
+        """Computes the AE loss."""
 
         if self.include_scatter:
             weighted_mse_loss = self.get_weighted_mse_loss(x, x_err, results['reconstructed_x'], results['scatter'], penalty = True)
@@ -745,10 +745,12 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-        if self.include_error_head == False and isinstance(dataset, TensorDataset) and len(dataset.tensors) == 2: # If user does not want errors and none are provided in the train_dataset, just add a dummy tensor. It'll get ignored later but this way code doesn't break
-            data, data_labels = dataset.tensors
-            dummy_err = torch.ones_like(data)
-            dataset = TensorDataset(data, dummy_err, data_labels)
+        # if self.include_error_head == False and isinstance(dataset, TensorDataset) and len(dataset.tensors) == 2: # If user does not want errors and none are provided in the train_dataset, just add a dummy tensor. It'll get ignored later but this way code doesn't break
+        #     data, data_labels = dataset.tensors
+        #     dummy_err = torch.ones_like(data)
+        #     dataset = TensorDataset(data, dummy_err, data_labels)
+
+        dataset = self.check_tensordataset_shape(dataset)
     
         data_lst = []
         data_error_lst = []
@@ -905,6 +907,48 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
 
 
 
+    def check_tensordataset_shape(self, tensor_dataset):
+
+        if self.include_error_head == False and self.include_classifier == False:
+
+            assert len(tensor_dataset.tensors) == 1, "Incorrect number of tensors in dataset. If `include_error_head = False` and `inlude_classifier = False`, then there should only be one tensor (the data) in the dataset."
+
+            data = tensor_dataset.tensors[0]
+            dummy_err = torch.ones_like(data)
+            dummy_labels = torch.ones_like(data)/2
+            tensor_dataset = TensorDataset(data, dummy_err, dummy_labels)
+
+
+        if self.include_error_head == True and self.include_classifier == False:
+        
+            assert len(tensor_dataset.tensors) == 2, "Incorrect number of tensors in dataset. If `include_error_head = True` and `inlude_classifier = False`, then there should be two tensors (the data and the uncertainty on the data) in the dataset."
+
+            data, data_err = tensor_dataset.tensors
+            dummy_labels = torch.ones_like(data)/2
+            tensor_dataset = TensorDataset(data, data_err, dummy_labels)
+
+
+        if self.include_error_head == False and self.include_classifier == True:
+        
+            assert len(tensor_dataset.tensors) == 2, "Incorrect number of tensors in dataset. If `include_error_head = False` and `inlude_classifier = True`, then there should be two tensors (the data and the labels) in the dataset."
+
+            data, labels = tensor_dataset.tensors
+            dummy_err = torch.ones_like(data)
+            tensor_dataset = TensorDataset(data, dummy_err, labels)
+
+
+
+        if self.include_error_head == True and self.include_classifier == True:
+        
+            assert len(tensor_dataset.tensors) == 3, "Incorrect number of tensors in dataset. If `include_error_head = False` and `inlude_classifier = True`, then there should be three tensors (the data, the uncertainty on the data, and the labels) in the dataset."
+
+            data, data_err, labels = tensor_dataset.tensors
+            tensor_dataset = TensorDataset(data, data_err, labels)
+
+
+        return tensor_dataset
+
+
     def KL_annealing(self, epoch, start_epoch, end_epoch, target_beta):
         if epoch < start_epoch:
             return 0.0
@@ -1022,7 +1066,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
 
 
     def train_epoch(self, train_loader, optimizer, device, alpha = 1.0, beta = 1.0, gamma = 1.0):
-        """Trains the VAE for one epoch."""
+        """Trains the AE for one epoch."""
         self.train() # Set model to training mode
         train_loss = 0
         mse_loss = 0
@@ -1065,13 +1109,17 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
         return train_loss
 
     
+    
 
     def train_model(self, train_dataset, epochs = 100, learning_rate = 1e-3, batch_size = 32, beta = 0.1, gamma = 1.0, validation_split = 0.0, kl_annealing_epochs = [200,500], optimizer = None, scheduler = None, device = None):
         ### Setup ###
-        if self.include_error_head == False and isinstance(train_dataset, TensorDataset) and len(train_dataset.tensors) == 2: # If user does not want errors and none are provided in the train_dataset, just add a dummy tensor. It'll get ignored later but this way code doesn't break
-            data, labels = train_dataset.tensors
-            dummy_err = torch.ones_like(data)
-            train_dataset = TensorDataset(data, dummy_err, labels)
+        # if self.include_error_head == False and isinstance(train_dataset, TensorDataset) and len(train_dataset.tensors) == 2: # If user does not want errors and none are provided in the train_dataset, just add a dummy tensor. It'll get ignored later but this way code doesn't break
+        #     data, labels = train_dataset.tensors
+        #     dummy_err = torch.ones_like(data)
+        #     train_dataset = TensorDataset(data, dummy_err, labels)
+
+        train_dataset = self.check_tensordataset_shape(train_dataset)
+
 
         if validation_split > 0.0:
             train_dataset, val_dataset = random_split(
@@ -1146,10 +1194,12 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
             print("Error: Model was not initialized with a classifier.")
             return
 
-        if self.include_error_head == False and isinstance(train_dataset, TensorDataset) and len(train_dataset.tensors) == 2: # If user does not want errors and none are provided in the train_dataset, just add a dummy tensor. It'll get ignored later but this way code doesn't break
-            data, labels = train_dataset.tensors
-            dummy_err = torch.ones_like(data)
-            train_dataset = TensorDataset(data, dummy_err, labels)
+        # if self.include_error_head == False and isinstance(train_dataset, TensorDataset) and len(train_dataset.tensors) == 2: # If user does not want errors and none are provided in the train_dataset, just add a dummy tensor. It'll get ignored later but this way code doesn't break
+        #     data, labels = train_dataset.tensors
+        #     dummy_err = torch.ones_like(data)
+        #     train_dataset = TensorDataset(data, dummy_err, labels)
+
+        train_dataset = self.check_tensordataset_shape(train_dataset)
 
         if device is None:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -1221,7 +1271,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
     
     def build_latent_map(self, train_loader, n_neighbors = 10, device = None, return_map = False):
         '''
-        Build a Nearest Neighbor map of the latent space using the loader (or dataset) provided.
+        Build a Nearest Neighbor map of the latent space using the TensorDataset provided. Recommended to use TensorDatasets, not DataLoaders.
     
         Should work now with both pytorch DataLoaders and pytorch TensorDataset
         
@@ -1237,6 +1287,10 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
     
         
         is_dataloader = isinstance(train_loader, DataLoader) #Figure out if using dataloader or dataset
+
+        if not is_dataloader:
+            train_loader = self.check_tensordataset_shape(train_loader)
+            
         
         with torch.no_grad():
             for data, data_err, _ in train_loader:
@@ -1270,6 +1324,9 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
 
         if device is None:
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        if data_err == None: #This is just a dummy variable. If include_error_head == False, then encoder will not look at this.
+            data_err = torch.ones_like(data)
 
 
         self.eval()
