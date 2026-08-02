@@ -4,6 +4,7 @@ import numpy as np
 from torch.utils.data import TensorDataset
 from matplotlib import pyplot as plt
 import matplotlib
+import os
 
 
 # To test:
@@ -1093,6 +1094,123 @@ class TestLatentScore:
             assert dist_score.shape == (n_sample,)
 
 
+class TestSavingLoadingModel:
+
+    def test_save_and_load_model_state_and_args(self, tmp_path):
+        """
+        Test that save_model and load_model correctly preserve architecture arguments,
+        history tracking attributes, and neural network weights.
+        """
+        from flexAE import flexAE
+
+        model = flexAE(
+                input_dim=4,
+                head_dim=[8],
+                hidden_dim=[8, 4],
+                latent_dim=2,
+                classifier_dim=[4, 4]
+            )
+
+
+        save_dir = str(tmp_path / "saved_models")
+        model_name = "test_run"
+        file_name = "checkpoint_epoch_1"
+
+
+        # Mutate some history attributes to verify restoration
+        model.total_loss_per_epoch = [1.5, 1.2, 0.9]
+        model.validation_loss_per_epoch = [1.6, 1.3, 1.0]
+
+
+        # Save the model
+        model.save_model(save_dir=save_dir, model_name=model_name, file_name=file_name)
+
+        expected_path = os.path.join(save_dir, model_name, f"{file_name}.pt")
+        assert os.path.exists(expected_path), "The .pt checkpoint file was not created."
+
+
+        # Load the model back
+        loaded_model = flexAE.load_model(save_dir=save_dir, model_name=model_name, file_name=file_name)
+
+        # 1. Check reconstructed architecture parameters
+        assert loaded_model.input_dim == model.input_dim
+        assert loaded_model.hidden_dim == model.hidden_dim
+        assert loaded_model.latent_dim == model.latent_dim
+        assert loaded_model.include_variational == model.include_variational
+        assert loaded_model.include_error_head == model.include_error_head
+
+        # 2. Check history state restoration
+        assert loaded_model.total_loss_per_epoch == [1.5, 1.2, 0.9]
+        assert loaded_model.validation_loss_per_epoch == [1.6, 1.3, 1.0]
+
+        # 3. Check weight equality across state dicts
+        for param_name, orig_param in model.named_parameters():
+            loaded_param = dict(loaded_model.named_parameters())[param_name]
+            assert torch.equal(orig_param, loaded_param), f"Weights mismatched for layer {param_name}"
+
+
+
+
+
+    def test_saving_during_training(self, tmp_path):
+        """
+        Test that consider_saving_model triggers 'best.pt', 'last.pt', and epoch_x.pt' during training
+        """
+        from flexAE import flexAE
+        
+        save_dir = str(tmp_path / "checkpoints")
+        model_name = "model_testing"
+
+        n_sample = 40
+        input_dim = 4
+        latent_dim = 2
+
+        batch_size = 5
+        epochs = 20
+        learning_rate = 1e-2
+        validation_split = 0.1
+        
+        model = flexAE(
+                input_dim=input_dim,
+                head_dim=[8],
+                hidden_dim=[8, 4],
+                latent_dim=latent_dim,
+                classifier_dim=[4, 4]
+            )
+
+        x = torch.randn(n_sample,input_dim)
+        #x_err = torch.abs(torch.randn(n_sample,input_dim))
+        labels = torch.tensor(np.round(np.random.rand(n_sample)), dtype=torch.long)
+        tensor_dataset = TensorDataset(x, labels)
+
+
+
+        model.setup_autosaving(
+            save_dir=save_dir,
+            model_name=model_name,
+            save_last=True,
+            save_best=True,
+            save_every_n_epochs = 5
+        )
+
+        model_folder = os.path.join(save_dir, model_name)
+
+
+        model.train_model(tensor_dataset, 
+                        epochs = epochs,
+                        learning_rate = learning_rate, 
+                        batch_size = batch_size,
+                        validation_split = validation_split)
+
+        
+
+        assert os.path.exists(os.path.join(model_folder, "best.pt"))
+        assert os.path.exists(os.path.join(model_folder, "last.pt"))
+        assert os.path.exists(os.path.join(model_folder, "epoch_5.pt"))
+        assert os.path.exists(os.path.join(model_folder, "epoch_15.pt"))
+        assert not os.path.exists(os.path.join(model_folder, "epoch_2.pt"))
+
+
 
 
 def test_split_tensordataset():
@@ -1112,3 +1230,4 @@ def test_split_tensordataset():
 
     assert np.allclose(len(train_dataset), np.round(split_fraction * n_sample))
     assert np.allclose(len(val_dataset), np.round((1-split_fraction) * n_sample))
+
