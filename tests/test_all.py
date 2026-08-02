@@ -940,6 +940,7 @@ class TestPlottingMethods:
         if model.include_variational:
             model.plot_logvar_per_epoch()
         model.parameter_summary(print_summary=False)
+        model.parameter_summary(print_summary=True)
 
 
     @pytest.mark.parametrize("settings", INIT_SETTINGS)
