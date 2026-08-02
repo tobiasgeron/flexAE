@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from astropy.io import fits
 import os
 from tqdm.notebook import tqdm
 import copy
@@ -13,7 +12,7 @@ from sklearn.neighbors import NearestNeighbors
 
 import torch
 from torch import nn, optim
-from torchvision import datasets, transforms
+#from torchvision import datasets, transforms
 from torch.utils.data import DataLoader,  TensorDataset, random_split
 from torch import optim
 
