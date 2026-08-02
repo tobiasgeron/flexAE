@@ -33,8 +33,8 @@ jobs:
       run: |
         python -m pytest --cov=flexAE tests/test_all.py --cov-report=xml tests/test_all.py
 
-    # # Upload coverage report to Codecov
-    # - name: Upload coverage reports to Codecov
-    #   uses: codecov/codecov-action@v5
-    #   with:
-    #     token: ${{ secrets.CODECOV_TOKEN }}
+    # Upload coverage report to Codecov
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
