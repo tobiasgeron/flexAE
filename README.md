@@ -7,13 +7,23 @@ Work in progress...
 
 ### How to install
 
-You could just download the `flexAE.py` package and import it directly. Alternatively, I recommend [git cloning](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) this entire repository and [creating a separate conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) for flexAE:
+The simplest way to use this code is to just download the `flexAE.py` file, copy-paste in your project and import it directly. However, this can be prone to dependency conflicts. 
+
+Alternatively, I recommend [git cloning](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) this entire repository and navigating into it by running these commands in the terminal:
+
+```
+git clone https://github.com/tobiasgeron/flexAE.git
+cd flexAE
+```
+
+and [creating a separate conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) for flexAE and activating it:
 
 ```
 conda create -name venv_flexAE python=3.14
+conda activate venv_flexAE
 ```
 
-Then activate and navigate into the cloned repository, and run this command in the terminal to install the correct dependencies:
+Then run this command to install the correct dependencies:
 
 ```
 pip install -r requirements.txt
