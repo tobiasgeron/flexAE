@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
-from tqdm.notebook import tqdm
+#from tqdm.notebook import tqdm
+from tqdm import tqdm
 import copy
 import math
 #import seaborn as sns
