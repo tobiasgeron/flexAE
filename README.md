@@ -1,5 +1,7 @@
 # flexAE
 
+[![CI](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml/badge.svg)](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml)
+
 Work in progress...
 
 ### How to install
