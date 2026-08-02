@@ -10,7 +10,7 @@ You could just download the `flexAE.py` package and import it directly. Alternat
 conda create -name venv_flexAE python=3.14
 ```
 
-Then navigate into the cloned repository, and run this command in the terminal to install the correct dependencies:
+Then activate and navigate into the cloned repository, and run this command in the terminal to install the correct dependencies:
 
 ```
 pip install -r requirements.txt
