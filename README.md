@@ -1,6 +1,7 @@
 # flexAE
 
 [![CI](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml/badge.svg)](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/tobiasgeron/flexAE/graph/badge.svg)](https://codecov.io/gh/tobiasgeron/flexAE)
 
 Work in progress...
 
