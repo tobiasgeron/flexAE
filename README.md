@@ -19,7 +19,7 @@ cd flexAE
 and [creating a separate conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) for flexAE and activating it:
 
 ```
-conda create -name venv_flexAE python=3.14
+conda create --name venv_flexAE python=3.14
 conda activate venv_flexAE
 ```
 
