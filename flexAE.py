@@ -1395,7 +1395,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
             Whenever a new model state is saved, also save it and overwrite last.pt. This way, the user can always load last.pt and it will load the last model.
 
         save_best : bool, default = True
-            Whenever a new best (= lowest validation loss) model is achieveed save it and overwrite best.pt. This way, the user can always load best.pt and it will load the best model.
+            Whenever a new best (= lowest validation loss) model is achieved save it and overwrite best.pt. This way, the user can always load best.pt and it will load the best model.
         
         save_every_n_epochs : bool, default = np.inf
             Save the model after every n epochs. By default, will never save.
