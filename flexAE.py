@@ -1111,7 +1111,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
     
     
 
-    def train_model(self, train_dataset, epochs = 100, learning_rate = 1e-3, batch_size = 32, beta = 0.1, gamma = 1.0, validation_split = 0.0, kl_annealing_epochs = [200,500], optimizer = None, scheduler = None, device = None):
+    def train_model(self, train_dataset, epochs = 100, learning_rate = 1e-3, batch_size = 32, beta = 0.1, gamma = 1.0, validation_split = 0.0, kl_annealing_epochs = [200,500], optimizer = None, scheduler = None, device = None, disable_tqdm = False):
         ### Setup ###
         # if self.include_error_head == False and isinstance(train_dataset, TensorDataset) and len(train_dataset.tensors) == 2: # If user does not want errors and none are provided in the train_dataset, just add a dummy tensor. It'll get ignored later but this way code doesn't break
         #     data, labels = train_dataset.tensors
@@ -1146,7 +1146,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
             gamma = 0
         
         #### Train the model ###
-        for epoch in tqdm(range(1, epochs + 1)):
+        for epoch in tqdm(range(1, epochs + 1), disable = disable_tqdm):
 
             if self.include_variational:
                 beta_current = self.KL_annealing(epoch, start_epoch=kl_annealing_epochs[0], end_epoch=kl_annealing_epochs[1], target_beta = beta)#0.0001
@@ -1189,7 +1189,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
 
 
 
-    def train_classifier(self, train_dataset, epochs=1000, learning_rate=1e-3, batch_size=32, gamma=1.0, validation_split=0.1, device=None, optimizer = None, scheduler = None):
+    def train_classifier(self, train_dataset, epochs=1000, learning_rate=1e-3, batch_size=32, gamma=1.0, validation_split=0.1, device=None, optimizer = None, scheduler = None, disable_tqdm = False):
         if not self.include_classifier:
             print("Error: Model was not initialized with a classifier.")
             return
@@ -1235,7 +1235,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
 
 
         # 4. Training Loop
-        for epoch in tqdm(range(1, epochs + 1)):
+        for epoch in tqdm(range(1, epochs + 1), disable = disable_tqdm):
             epoch_loss = self.train_epoch(train_loader, optimizer, device, alpha = 0, beta=0, gamma=gamma) ## We keep alpha and beta=0 because we aren't updating the latent space/VAE part anyway
 
 
