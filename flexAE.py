@@ -1358,9 +1358,9 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
             if len(self.total_loss_per_epoch) == 1:
                 best_metric = np.inf
             else:
-                best_metric = getattr(self, self.save_best_metric[:-1]) #All losses except the newest one
+                best_metric = np.min(getattr(self, self.save_best_metric)[:-1]) #All losses except the newest one
                 #best_val_loss = np.min(self.validation_loss_per_epoch[:-1]) #All losses except the newest one
-            current_metric = getattr(self, self.save_best_metric[-1])
+            current_metric = getattr(self, self.save_best_metric)[-1]
             #current_val_loss = self.validation_loss_per_epoch[-1]
 
             # If a new best model appears, save it.
