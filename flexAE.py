@@ -97,6 +97,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
         self.save_last = False
         self.save_best = False
         self.save_every_n_epochs = np.inf
+        self.save_best_metric = ''
 
 
         
@@ -1354,15 +1355,17 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
         if self.save: 
             current_epoch = len(self.total_loss_per_epoch)
             
-            if len(self.validation_loss_per_epoch) == 1:
-                best_val_loss = np.inf
+            if len(self.total_loss_per_epoch) == 1:
+                best_metric = np.inf
             else:
-                best_val_loss = np.min(self.validation_loss_per_epoch[:-1]) #All losses except the newest one
-            current_val_loss = self.validation_loss_per_epoch[-1]
+                best_metric = getattr(self, self.save_best_metric[:-1]) #All losses except the newest one
+                #best_val_loss = np.min(self.validation_loss_per_epoch[:-1]) #All losses except the newest one
+            current_metric = getattr(self, self.save_best_metric[-1])
+            #current_val_loss = self.validation_loss_per_epoch[-1]
 
             # If a new best model appears, save it.
             if self.save_best: 
-                if current_val_loss < best_val_loss:
+                if current_metric < best_metric:
                     self.save_model(self.save_dir, self.model_name, file_name = 'best')
                     if self.save_last:
                         self.save_model(self.save_dir, self.model_name, file_name = 'last')
@@ -1384,7 +1387,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
                 
 
 
-    def setup_autosaving(self, save_dir = 'saved_models', model_name = 'lastest_model', save_last = True, save_best = False, save_every_n_epochs = np.inf):
+    def setup_autosaving(self, save_dir = 'saved_models', model_name = 'lastest_model', save_last = True, save_best = False, save_every_n_epochs = np.inf, save_best_metric = 'validation_loss_per_epoch'):
         """
         Setup the autosaving process. 
 
@@ -1399,6 +1402,9 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
         
         save_every_n_epochs : bool, default = np.inf
             Save the model after every n epochs. By default, will never save.
+
+        best_metric : str, default = 'validation_loss_per_epoch'
+            If save_best == True, we still need to define what "best" is. Here you add which loss we focus on minimizing. By default this is validation_loss_per_epoch, but these other options are also possible: 'total_loss_per_epoch', 'mse_loss_per_epoch', 'kld_loss_per_epoch', 'bce_loss_per_epoch', 'validation_loss_per_epoch', 'validation_mse_loss_per_epoch', 'validation_kld_loss_per_epoch', 'validation_bce_loss_per_epoch',
         """
 
         if save_dir[-1] != '/':
@@ -1419,6 +1425,7 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
         self.save_last = save_last
         self.save_best = save_best
         self.save_every_n_epochs = save_every_n_epochs
+        self.save_best_metric = save_best_metric
 
 
 
@@ -1478,7 +1485,8 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
             'model_name' : self.model_name,
             'save_last' : self.save_last,
             'save_best' : self.save_best,
-            'save_every_n_epochs' : self.save_every_n_epochs
+            'save_every_n_epochs' : self.save_every_n_epochs,
+            'save_best_metric' : self.save_best_metric
         }
 
         # 3. Combine everything into a single checkpoint dictionary
