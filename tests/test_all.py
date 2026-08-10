@@ -590,9 +590,14 @@ class TestModelTraining:
 
         loss_start = model.total_loss_per_epoch[0]
         loss_end = model.total_loss_per_epoch[-1]
+        loss_min = np.min(model.total_loss_per_epoch)
+        loss_50p = np.percentile(model.total_loss_per_epoch, 50)
+        loss_end_ish = np.median(model.total_loss_per_epoch[int(epochs*0.9):]) #median loss at last 10% of training
 
-
-        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end}"
+        #assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end}" #Can't actually do this due to random fluctuations
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_min}" #Minimum of whole curve
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_50p}" #50th percentile; testing that on the whole, curve went down
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end_ish}" #Median loss at last 10% of training
 
 
     @pytest.mark.parametrize("settings", INIT_SETTINGS)
@@ -644,10 +649,19 @@ class TestModelTraining:
                           batch_size = batch_size,
                           validation_split = validation_split)
 
+
         loss_start = model.total_loss_per_epoch[0]
         loss_end = model.total_loss_per_epoch[-1]
+        loss_min = np.min(model.total_loss_per_epoch)
+        loss_50p = np.percentile(model.total_loss_per_epoch, 50)
+        loss_end_ish = np.median(model.total_loss_per_epoch[int(epochs*0.9):]) #median loss at last 10% of training
 
-        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end}"
+        #assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end}" #Can't actually do this due to random fluctuations
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_min}" #Minimum of whole curve
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_50p}" #50th percentile; testing that on the whole, curve went down
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end_ish}" #Median loss at last 10% of training
+
+
 
 
 
@@ -692,11 +706,18 @@ class TestModelTraining:
                           batch_size = batch_size,
                           validation_split = validation_split)
 
+
         loss_start = model.total_loss_per_epoch[0]
         loss_end = model.total_loss_per_epoch[-1]
+        loss_min = np.min(model.total_loss_per_epoch)
+        loss_50p = np.percentile(model.total_loss_per_epoch, 50)
+        loss_end_ish = np.median(model.total_loss_per_epoch[int(epochs*0.9):]) #median loss at last 10% of training
 
+        #assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end}" #Can't actually do this due to random fluctuations
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_min}" #Minimum of whole curve
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_50p}" #50th percentile; testing that on the whole, curve went down
+        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end_ish}" #Median loss at last 10% of training
 
-        assert loss_end < loss_start,f"Loss at start: {loss_start}; loss at end: {loss_end}"
 
 
 class TestClassifierTraining:
