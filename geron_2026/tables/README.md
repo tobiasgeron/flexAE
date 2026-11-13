@@ -1,7 +1,4 @@
-# TODO
-
-This table is not yet final, it will very likely change as the model improves. So be careful about using it right now.
-
+This table contains information about the Rubin DP2 47 Tuc sample analyzed in Géron et al. (2026). It contains the following columns:
 
 `Rubin_objectId` : The Rubin DP1 objectId, which can be used to match this entry to other Rubin DP1 tables  
 `Gaia_sourceId` : The Gaia DR3 source_id, which can be used to match this entry to other Gaia DR3 tables  
