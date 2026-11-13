@@ -1,7 +1,14 @@
 name: CI
 
 # We can specify which Github events will trigger a CI build
-on: push
+# on: push
+# Trigger only when Python files, dependencies, or the workflow file itself change
+on:
+  push:
+    paths:
+      - '**.py'
+      - 'requirements.txt'
+      - '.github/workflows/main.yml'
 
 # now define a single job 'build' (but could define more)
 jobs:
