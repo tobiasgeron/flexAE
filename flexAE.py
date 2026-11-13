@@ -23,6 +23,70 @@ from torch import optim
 
 class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for all neural network modules
     '''
+    Description
+    -----------
+
+    This is the flexAE class. 
+
+
+
+    Parameters
+    ----------
+
+    input_dim : int, default = 6
+                The number of dimensions for the inputs. Corresponds to the number of features
+            
+    head_dim: list, default = [8]
+                If `include_error_head = True`, flexAE will append two additional heads in front of the main encoder (one for the features, and one for the feature uncertainties). The number of layers and number of neurons in each layer in each head can be adjusted here.
+            
+    hidden_dim: list, default = [16,8]
+                The shape of the hidden layers. The number of layers and number of neurons in each layer can be adjusted here.
+            
+    latent_dim: int, default = 4
+                The number of latent space dimensions.
+            
+    classifier_dim: list, default = [8,8]
+                If `include_classifier = True`, flexAE will append a dedicated classifier component. The number of layers and number of neurons in each layer in the classifier can be adjusted here.
+            
+    include_variational: bool, default = False
+                Whether to make the autoencoder a variational autoencoder. 
+            
+    include_scatter: bool, default = False
+                Whether to append a separate scatter decoder component to autoencoder architecture. See Géron et al. (2026) and Laroche et al. (2025) for more detail on the scatter component.
+            
+    include_error_head: bool, default = False
+                Whether to add separate heads for the features and their uncertainties
+
+    include_classifier: bool, default = True
+                Whether to add a separate classifier component that classifies based on the latent space.
+                
+    Returns
+    -------
+
+    An initialized (but untrained) flexAE model.
+
+    
+    Example
+    -------
+
+    model = flexAE(
+        input_dim = 4
+        head_dim = [12], #this is per head, so the full head dimension will be twice this
+        hidden_dim = [16,8],
+        latent_dim = 4,
+        classifier_dim = [16,16,16],
+        include_variational = False,
+        include_scatter = True,
+        include_classifier = True,
+        include_error_head = True
+    ).to(device)
+
+    
+    
+    Notes
+    -----
+
+
 
     '''
 
@@ -1552,6 +1616,9 @@ class flexAE(nn.Module): #AE is child of nn.Module class. It is base class for a
 
         # 3. Load the structural neural network weights
         model.load_state_dict(checkpoint['state_dict'])
+
+
+        model.to(map_location)
         
         print(f"Model successfully loaded from {save_loc}.")
         return model
