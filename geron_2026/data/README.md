@@ -18,3 +18,4 @@ The `simulated_data.csv` file contains the simulated data used in Géron et al. 
 `r_abs_err`: uncertainty in the r-band absolute magnitude  
 `i_abs`: i-band absolute magnitude  
 `i_abs_err`: uncertainty in the i-band absolute magnitude  
+`is_binary`: whether this simulated system is a binary (1) or a single star (0)  
