@@ -16,13 +16,15 @@ flexAE can be setup and trained fairly quickly. In the example below, I will ass
 from flexAE import *
 
 # Initialize model with architecture
-model = flexAE(input_dim = 4).to(device)
+model = flexAE(input_dim = 4)
 
 # Train for 100 epochs
 model.train_model(train_dataset, epochs = 100)
 ```
 
-Do check out the tutorials for more elaborate examples! There are many features you can customize.
+Do check out the tutorials for more elaborate examples! There are many features you can customize. And you can always run `help(flexAE)` to read the docstring. 
+
+
 
 ### How to install
 
