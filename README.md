@@ -2,10 +2,11 @@
 
 [![CI](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml/badge.svg)](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/tobiasgeron/flexAE/graph/badge.svg)](https://codecov.io/gh/tobiasgeron/flexAE)
+[![arXiv](https://img.shields.io/badge/arXiv-Paper-blue.svg)](https://arxiv.org/abs/2609.05616)
 
-flexAE is an autoencoder framework that seamlessly integrates multiple components. These include a classifier component that acts directly in the latent space, a separate input head for observational uncertainties, a scatter component, and a toggle to make it a variational autoencoder. The most common use case for flexAE is classification in a high-dimensional space while accounting for observational uncertainties. It was originally developed in Géron et al. (2026) to classify unresolved binary systems in [47 Tucanae](https://en.wikipedia.org/wiki/47_Tucanae) using photometric data from Rubin DP1, but it can be applied to many other classification problems.
+flexAE is an autoencoder framework that seamlessly integrates multiple components. These include a classifier component that acts directly in the latent space, a separate input head for observational uncertainties, a scatter component, and a toggle to make it a variational autoencoder. The most common use case for flexAE is classification in a high-dimensional space while accounting for observational uncertainties. It was originally developed in [Géron et al. (2026)](https://arxiv.org/abs/2609.05616) to classify unresolved binary systems in [47 Tucanae](https://en.wikipedia.org/wiki/47_Tucanae) using photometric data from Rubin DP1, but it can be applied to many other classification problems.
 
-If you find this repository useful, I would love to hear about how you use flexAE, so please let me know at tobias.geron@utoronto.ca. Also feel free to reach out if you have any questions. If you end up using this for a publication, please cite Géron et al. (2026). 
+If you find this repository useful, I would love to hear about how you use flexAE, so please let me know at tobias.geron@utoronto.ca. Also feel free to reach out if you have any questions. If you end up using this for a publication, please cite [Géron et al. (2026)](https://arxiv.org/abs/2609.05616). 
 
 
 ### Minimal example
