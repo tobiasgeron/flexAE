@@ -1,0 +1,1 @@
+This contains the training data, final model, and classifications presented in Géron et al. (2026). 
