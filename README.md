@@ -3,6 +3,7 @@
 [![CI](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml/badge.svg)](https://github.com/tobiasgeron/flexAE/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/tobiasgeron/flexAE/graph/badge.svg)](https://codecov.io/gh/tobiasgeron/flexAE)
 [![arXiv](https://img.shields.io/badge/arXiv-2609.05616-blue.svg)](https://arxiv.org/abs/2609.05616)
+[![DOI](https://zenodo.org/badge/1315496751.svg)](https://doi.org/10.5281/zenodo.24377439)
 
 flexAE is an autoencoder framework that seamlessly integrates multiple components. These include a classifier component that acts directly in the latent space, a separate input head for observational uncertainties, a scatter component, and a toggle to make it a variational autoencoder. The most common use case for flexAE is classification in a high-dimensional space while accounting for observational uncertainties. It was originally developed in [Géron et al. (2026)](https://arxiv.org/abs/2609.05616) to classify unresolved binary systems in [47 Tucanae](https://en.wikipedia.org/wiki/47_Tucanae) using photometric data from Rubin DP1, but it can be applied to many other classification problems.
 
